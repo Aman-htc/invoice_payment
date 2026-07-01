@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.payments import router as payment_router
 from app.webhook import router as webhook_router
-# from app.db import get_db_connection
 
 app = FastAPI()
 
