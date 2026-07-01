@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.payments import router as payment_router
-from app.webhook import router as webhook_router
+# from app.webhook import router as webhook_router
 
 app = FastAPI()
 
@@ -20,7 +20,7 @@ app.add_middleware(
 
 # routers
 app.include_router(payment_router)
-app.include_router(webhook_router)
+# app.include_router(webhook_router)
 
 @app.get("/")
 def home():
