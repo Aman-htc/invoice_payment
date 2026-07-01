@@ -13,6 +13,22 @@ import {
   Button,
   Spinner,
 } from "react-bootstrap";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaRupeeSign,
+  FaShieldAlt,
+  FaLock,
+  FaCheckCircle,
+  FaCreditCard,
+} from "react-icons/fa";
+import {
+  Badge,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
 import api from "../services/api";
 
 export default function PaymentForm() {
@@ -43,8 +59,11 @@ export default function PaymentForm() {
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     setLoading(true);
+    console.log("Razorpay Key:", process.env.NEXT_PUBLIC_RAZORPAY_KEY);
+    // console.log("Backend Response:", order);
 
     const res = await loadScript();
     if (!res) {
@@ -82,12 +101,14 @@ export default function PaymentForm() {
         },
 
         handler: async function (response) {
-          await api.post("/users", {
-            ...form,
+          await api.post("/verify-payment", {
+            invoice_id: order.invoice_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
             razorpay_signature: response.razorpay_signature,
           });
+
+          alert("Payment Successful");
 
           alert("🎉 Payment Successful!");
           setLoading(false);
@@ -103,111 +124,257 @@ export default function PaymentForm() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #0d6efd, #20c997)",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <Container>
-        <Row className="justify-content-center">
-          <Col md={7} lg={5}>
-            <Card className="shadow-lg border-0 rounded-4">
+    
+    
+  <Container
+    fluid
+    className="d-flex justify-content-center align-items-center py-5"
+    style={{
+      minHeight: "100vh",
+      background:
+        "linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb,#0ea5e9)",
+    }}
+  >
+    <Row className="w-100 justify-content-center">
+      <Col lg={6} xl={5}>
 
-              {/* HEADER */}
-              <Card.Header className="text-center bg-dark text-white py-3 rounded-top-4">
-                <h4 className="mb-0">Secure Payment Gateway</h4>
-                <small>Complete your payment safely</small>
-              </Card.Header>
+        <Card
+          className="border-0 shadow-lg rounded-5 overflow-hidden"
+          style={{
+            background: "rgba(255,255,255,0.97)",
+            backdropFilter: "blur(20px)",
+          }}
+        >
 
-              {/* BODY */}
-              <Card.Body className="p-4">
-                <Form onSubmit={handleSubmit}>
+          {/* Header */}
+          <Card.Header
+            className="text-center text-white border-0 py-4"
+            style={{
+              background:
+                "linear-gradient(90deg,#2563eb,#4f46e5)",
+            }}
+          >
+            <FaCreditCard size={40} />
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      placeholder="Enter your name"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
+            <h2 className="fw-bold mt-3 mb-1">
+              Secure Payment
+            </h2>
+
+            <p className="mb-0 opacity-75">
+              Fast • Safe • Trusted
+            </p>
+          </Card.Header>
+
+          <Card.Body className="p-5">
+
+            <div className="text-center mb-4">
+
+             
+
+            </div>
+
+            <Form onSubmit={handleSubmit}>
+
+              {/* Name */}
+
+              <InputGroup className="mb-4">
+
+                <InputGroup.Text>
+                  <FaUser />
+                </InputGroup.Text>
+
+                <Form.Control
+                  size="lg"
+                  name="name"
+                  placeholder="Full Name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                />
+
+              </InputGroup>
+
+              {/* Email */}
+
+              <InputGroup className="mb-4">
+
+                <InputGroup.Text>
+                  <FaEnvelope />
+                </InputGroup.Text>
+
+                <Form.Control
+                  type="email"
+                  size="lg"
+                  name="email"
+                  placeholder="Email Address"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+
+              </InputGroup>
+
+              {/* Phone */}
+
+              <InputGroup className="mb-4">
+
+                <InputGroup.Text>
+                  <FaPhoneAlt />
+                </InputGroup.Text>
+
+                <Form.Control
+                  size="lg"
+                  name="phone"
+                  placeholder="Phone Number"
+                  value={form.phone}
+                  onChange={handleChange}
+                  required
+                />
+
+              </InputGroup>
+
+              {/* Address */}
+
+              <InputGroup className="mb-4">
+
+                <InputGroup.Text>
+                  <FaMapMarkerAlt />
+                </InputGroup.Text>
+
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  name="address"
+                  placeholder="Address"
+                  value={form.address}
+                  onChange={handleChange}
+                />
+
+              </InputGroup>
+
+              {/* Amount */}
+
+              <InputGroup className="mb-3">
+
+                <InputGroup.Text>
+                  <FaRupeeSign />
+                </InputGroup.Text>
+
+                <Form.Control
+                  type="number"
+                  size="lg"
+                  name="amount"
+                  placeholder="Payment Amount"
+                  value={form.amount}
+                  onChange={handleChange}
+                  required
+                />
+
+              </InputGroup>
+
+              {form.amount && (
+
+                <Alert
+                  variant="primary"
+                  className="text-center rounded-4"
+                >
+
+                  <strong>
+                    Total Amount :
+                  </strong>
+
+                  ₹ {form.amount}
+
+                </Alert>
+
+              )}
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-100 rounded-pill fw-bold shadow"
+                disabled={loading}
+                style={{
+                  background:
+                    "linear-gradient(90deg,#16a34a,#22c55e)",
+                  border: "none",
+                  padding: "15px",
+                  fontSize: "18px",
+                }}
+              >
+
+                {loading ? (
+                  <>
+                    <Spinner
+                      animation="border"
+                      size="sm"
+                      className="me-2"
                     />
-                  </Form.Group>
+                    Processing Payment...
+                  </>
+                ) : (
+                  <>
+                    <FaLock className="me-2" />
+                    Pay Securely
+                  </>
+                )}
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      placeholder="Enter email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
+              </Button>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Phone</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="phone"
-                      placeholder="Enter phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
+            </Form>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={2}
-                      name="address"
-                      placeholder="Enter address"
-                      value={form.address}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
+            <hr className="my-4" />
 
-                  <Form.Group className="mb-4">
-                    <Form.Label>Amount (INR)</Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="amount"
-                      placeholder="Enter amount"
-                      value={form.amount}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
+            <Row className="text-center">
 
-                  <Button
-                    type="submit"
-                    variant="success"
-                    className="w-100 py-2 fw-bold"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Spinner size="sm" animation="border" /> Processing...
-                      </>
-                    ) : (
-                      "Pay Now 💳"
-                    )}
-                  </Button>
+              <Col>
 
-                </Form>
-              </Card.Body>
+                <FaCheckCircle
+                  className="text-success mb-2"
+                  size={22}
+                />
 
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
+                <div className="small fw-semibold">
+                  Secure
+                </div>
+
+              </Col>
+
+              <Col>
+
+                <FaShieldAlt
+                  className="text-primary mb-2"
+                  size={22}
+                />
+
+                <div className="small fw-semibold">
+                  Encrypted
+                </div>
+
+              </Col>
+
+              <Col>
+
+                <FaCreditCard
+                  className="text-warning mb-2"
+                  size={22}
+                />
+
+                <div className="small fw-semibold">
+                  Razorpay
+                </div>
+
+              </Col>
+
+            </Row>
+
+          </Card.Body>
+
+        </Card>
+
+      </Col>
+    </Row>
+  </Container>
+);
+
 }
